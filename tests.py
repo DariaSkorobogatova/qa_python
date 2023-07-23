@@ -1,15 +1,15 @@
 import pytest
 
-books = [
-    ['Понедельник начинается в субботу', 'Фантастика'],
-    ['2001: Космическая одиссея', 'Фантастика'],
-    ['Кладбище домашних животных', 'Ужасы'],
-    ['Сияние', 'Ужасы'],
-    ['Убийство в восточном экспрессе', 'Детективы'],
-    ['Маугли', 'Мультфильмы'],
-    ['Трое в лодке, не считая собаки', 'Комедии'],
-    ['Приключения бравого солдата Швейка', 'Комедии']
-]
+books = {
+    'Понедельник начинается в субботу': 'Фантастика',
+    '2001: Космическая одиссея': 'Фантастика',
+    'Кладбище домашних животных': 'Ужасы',
+    'Сияние': 'Ужасы',
+    'Убийство в восточном экспрессе': 'Детективы',
+    'Маугли': 'Мультфильмы',
+    'Трое в лодке, не считая собаки': 'Комедии',
+    'Приключения бравого солдата Швейка': 'Комедии'
+}
 
 
 class TestBooksCollector:
@@ -25,45 +25,34 @@ class TestBooksCollector:
         collector.add_new_book('Что делать, если ваш кот хочет вас убить')
         assert len(collector.books_genre) == 2
 
-    @pytest.mark.parametrize('name, genre', books)
-    def test_set_book_genre_to_added_book(self, name, genre, collector):
-        collector.books_genre[name] = ''
+    @pytest.mark.parametrize('name, genre', [['Понедельник начинается в субботу', 'Фантастика']])
+    def test_set_book_genre_to_added_book_existent_genre(self, name, genre, collector):
+        collector.add_new_book(name)
         collector.set_book_genre(name, genre)
-        assert collector.books_genre[name] == genre
-
-    @pytest.mark.parametrize('name, genre', books)
-    def test_get_book_genre_for_every_in_books(self, name, genre, collector):
-        collector.books_genre[name] = genre
         assert collector.get_book_genre(name) == genre
 
+    @pytest.mark.parametrize('name, genre', [['Дневник памяти', 'Роман']])
+    def test_set_book_genre_to_added_book_nonexistent_genre(self, name, genre, collector):
+        collector.add_new_book(name)
+        collector.set_book_genre(name, genre)
+        assert collector.get_book_genre(name) == ''
+
     def test_get_books_with_specific_genre_comedy(self, collector):
-        genre = 'Комедии'
-        names = list()
-        for i in range(len(books)):
-            collector.books_genre[books[i][0]] = books[i][1]
-            if books[i][1] == genre:
-                names.append(books[i][0])
-        assert collector.get_books_with_specific_genre(genre) == names
+        collector.books_genre = books
+        assert collector.get_books_with_specific_genre('Комедии') == ['Трое в лодке, не считая собаки', 'Приключения бравого солдата Швейка']
 
     def test_get_books_genre_return_collection(self, collector):
-        for i in range(len(books)):
-            collector.books_genre[books[i][0]] = books[i][1]
-        assert len(collector.get_books_genre()) != 0
+        collector.books_genre = books
+        assert len(collector.get_books_genre()) == 8
 
     def test_get_books_for_children(self, collector):
-        books_for_kids = list()
-        for i in range(len(books)):
-            collector.books_genre[books[i][0]] = books[i][1]
-            if books[i][1] not in collector.genre_age_rating:
-                books_for_kids.append(books[i][0])
-        assert collector.get_books_for_children() == books_for_kids
+        collector.books_genre = books
+        assert collector.get_books_for_children() == ['Понедельник начинается в субботу', '2001: Космическая одиссея', 'Маугли', 'Трое в лодке, не считая собаки', 'Приключения бравого солдата Швейка']
 
-    @pytest.mark.parametrize('name', ['Понедельник начинается в субботу', 'Убийство в восточном экспрессе'])
-    def test_add_book_in_favorites(self, name, collector):
-        for i in range(len(books)):
-            collector.books_genre[books[i][0]] = books[i][1]
-        collector.add_book_in_favorites(name)
-        assert collector.favorites[0] == name
+    def test_add_book_in_favorites(self, collector):
+        collector.books_genre = books
+        collector.add_book_in_favorites('Понедельник начинается в субботу')
+        assert collector.favorites[0] == 'Понедельник начинается в субботу'
 
     def test_delete_book_from_favorites(self, collector):
         deleted_book = '10 негритят'
