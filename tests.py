@@ -23,19 +23,19 @@ class TestBooksCollector:
     def test_add_new_book_add_two_books(self, collector):
         collector.add_new_book('Гордость и предубеждение и зомби')
         collector.add_new_book('Что делать, если ваш кот хочет вас убить')
-        assert len(collector.books_genre) == 2
+        assert len(collector.books_genre) == 2, f"Длина коллекции должна быть {len(collector.books_genre)}"
 
     @pytest.mark.parametrize('name, genre', [['Понедельник начинается в субботу', 'Фантастика']])
     def test_set_book_genre_to_added_book_existent_genre(self, name, genre, collector):
         collector.add_new_book(name)
         collector.set_book_genre(name, genre)
-        assert collector.get_book_genre(name) == genre
+        assert collector.get_book_genre(name) == genre, f"Жанр должен быть {genre}"
 
     @pytest.mark.parametrize('name, genre', [['Дневник памяти', 'Роман']])
     def test_set_book_genre_to_added_book_nonexistent_genre(self, name, genre, collector):
         collector.add_new_book(name)
         collector.set_book_genre(name, genre)
-        assert collector.get_book_genre(name) == ''
+        assert collector.get_book_genre(name) == '', "Жанр не должен был присвоиться, так как его нет в списке допустимых"
 
     def test_get_books_with_specific_genre_comedy(self, collector):
         collector.books_genre = books
@@ -43,7 +43,7 @@ class TestBooksCollector:
 
     def test_get_books_genre_return_collection(self, collector):
         collector.books_genre = books
-        assert len(collector.get_books_genre()) == 8
+        assert len(collector.get_books_genre()) == 8, f"Длина коллеции должна быть {len(collector.get_books_genre())}"
 
     def test_get_books_for_children(self, collector):
         collector.books_genre = books
