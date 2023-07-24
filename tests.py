@@ -52,7 +52,7 @@ class TestBooksCollector:
     def test_add_book_in_favorites(self, collector):
         collector.books_genre = books
         collector.add_book_in_favorites('Понедельник начинается в субботу')
-        assert collector.favorites[0] == 'Понедельник начинается в субботу'
+        assert collector.get_list_of_favorites_books() == ['Понедельник начинается в субботу']
 
     def test_delete_book_from_favorites(self, collector):
         deleted_book = '10 негритят'
